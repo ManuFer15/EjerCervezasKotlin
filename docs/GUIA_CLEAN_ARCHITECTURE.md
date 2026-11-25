@@ -939,7 +939,7 @@ class MainViewModel @Inject constructor(
 }
 ```
 
-El id del elemento viaja en el `Intent` de la Activity. El ViewModel lo lee de `SavedStateHandle`, que Hilt entrega a cada clase marcada con `@HiltViewModel`.
+El, id del elemento viaja en el `Intent` de la Activity. El ViewModel lo lee de `SavedStateHandle`, que Hilt entrega a cada clase marcada con `@HiltViewModel`.
 
 `app/src/main/java/com/example/app/ui/detail/DetailViewModel.kt`
 

@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Amber Palette -->
+    <color name="amber_primary">#F59E0B</color>
+    <color name="amber_primary_dark">#B45309</color>
+    <color name="amber_secondary">#B45309</color>
+    <color name="amber_accent">#FBBF24</color>
+
+    <!-- Light Mode -->
+    <color name="amber_bg_light">#FFFBEB</color>
+    <color name="amber_surface_light">#FFFFFF</color>
+    <color name="amber_text_light">#1C1917</color>
+
+    <!-- Dark Mode -->
+    <color name="amber_bg_dark">#1C1917</color>
+    <color name="amber_surface_dark">#292524</color>
+    <color name="amber_text_dark">#FEF3C7</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
