@@ -5,18 +5,24 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Item
-import com.example.usecases.FindItemsByNameUseCase
 import com.example.usecases.GetItemsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel para la pantalla principal de listado y búsqueda de cervezas.
+ * Gestiona el estado de la UI (Cargando, Contenido y Navegación) emitiéndolo vía LiveData.
+ */
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getItemsUseCase: GetItemsUseCase,
-    private val findItemsByNameUseCase: FindItemsByNameUseCase
+    private val getItemsUseCase: GetItemsUseCase
 ) : ViewModel() {
 
+    /**
+     * Estados posibles de la interfaz de usuario en la pantalla principal.
+     */
     sealed class UiModel {
         data object Loading : UiModel()
         data class Content(val items: List<Item>) : UiModel()
@@ -30,28 +36,35 @@ class MainViewModel @Inject constructor(
             return _uiModel
         }
 
+    private var searchJob: Job? = null
+
+    /** Carga inicial del catálogo. */
     fun refresh() {
-        viewModelScope.launch {
+        search(null)
+    }
+
+    /**
+     * Ejecuta la búsqueda de cervezas cancelando cualquier petición previa en vuelo.
+     *
+     * @param query Término escrito por el usuario en el buscador.
+     */
+    fun search(query: String?) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             _uiModel.value = UiModel.Loading
-            _uiModel.value = UiModel.Content(getItemsUseCase.invoke())
+            try {
+                val items = getItemsUseCase.invoke(query)
+                _uiModel.value = UiModel.Content(items)
+            } catch (_: Exception) {
+                _uiModel.value = UiModel.Content(emptyList())
+            }
         }
     }
 
+    /**
+     * Notifica la selección de una cerveza para navegar a su detalle.
+     */
     fun onItemClicked(item: Item) {
         _uiModel.value = UiModel.Navigation(item)
-    }
-
-    fun doSearch(query: String) {
-        viewModelScope.launch {
-            _uiModel.value = UiModel.Loading
-            _uiModel.value = UiModel.Content(findItemsByNameUseCase.invoke(query))
-        }
-    }
-
-    fun cleanSearch() {
-        viewModelScope.launch {
-            _uiModel.value = UiModel.Loading
-            _uiModel.value = UiModel.Content(emptyList())
-        }
     }
 }

@@ -11,6 +11,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel encargado de la pantalla de detalle de una cerveza.
+ * Recupera el ID del extra de navegación almacenado en [SavedStateHandle] y solicita la información completa.
+ */
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -19,9 +23,10 @@ class DetailViewModel @Inject constructor(
 
     private val itemId: Int = savedStateHandle.get<Int>(ITEM_ID) ?: -1
 
+    /** Estados de la UI en la vista de detalle. */
     sealed class UiModel {
         data object Loading : UiModel()
-        data class Content(val items: List<Item>) : UiModel()
+        data class Content(val beer: Item?) : UiModel()
     }
 
     private val _uiModel = MutableLiveData<UiModel>()
@@ -31,10 +36,20 @@ class DetailViewModel @Inject constructor(
             return _uiModel
         }
 
+    /** Realiza la petición de datos de la cerveza. */
     fun findItem() {
+        if (itemId == -1) {
+            _uiModel.value = UiModel.Content(null)
+            return
+        }
         viewModelScope.launch {
             _uiModel.value = UiModel.Loading
-            _uiModel.value = UiModel.Content(findItemByIdUseCase.invoke(itemId))
+            try {
+                val beer = findItemByIdUseCase.invoke(itemId)
+                _uiModel.value = UiModel.Content(beer)
+            } catch (_: Exception) {
+                _uiModel.value = UiModel.Content(null)
+            }
         }
     }
 

@@ -1,17 +1,26 @@
 package com.example.cervezas.server
 
-import com.example.domain.model.Item
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
+/**
+ * Interfaz de servicio de Retrofit para definir las llamadas HTTP a la API REST de Punk API v3.
+ */
 interface RemoteApiService {
 
-    @GET("items")
-    suspend fun getItems(): List<Item>
+    /**
+     * Consulta el catálogo de cervezas con soporte para paginación y búsqueda por nombre.
+     */
+    @GET("api/v3/beers")
+    suspend fun getBeers(
+        @Query("page") page: Int = 1,
+        @Query("beer_name") beerName: String? = null
+    ): List<BeerDto>
 
-    @GET("items")
-    suspend fun findItemsByName(@Query("name") name: String): List<Item>
-
-    @GET("items")
-    suspend fun findItemById(@Query("id") id: String): List<Item>
+    /**
+     * Consulta los datos de una única cerveza por su ID.
+     */
+    @GET("api/v3/beers/{id}")
+    suspend fun getBeerById(@Path("id") id: Int): BeerDto
 }

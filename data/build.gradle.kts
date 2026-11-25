@@ -16,4 +16,8 @@ kotlin {
 
 dependencies {
     api(project(":domain"))
+    implementation(libs.kotlinx.coroutines.core)
+    testImplementation(project(":testShared"))
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

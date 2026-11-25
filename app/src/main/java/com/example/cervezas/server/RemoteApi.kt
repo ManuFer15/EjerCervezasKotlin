@@ -12,7 +12,7 @@ object RemoteApi {
         .build()
 
     val service: RemoteApiService = Retrofit.Builder()
-        .baseUrl("https://api.example.com/")
+        .baseUrl("https://punkapi.dev/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
